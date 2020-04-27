@@ -27,7 +27,7 @@ def main():
 
     log.info('Current dir ' + os.getcwd())
     try:
-        df = pd.read_csv('fragments-train.csv')
+        df = pd.read_csv('/src/fragments-train.csv')
     except Exception as e:
         log.exception('Exception during reading CSV-file')
         return 1
@@ -81,7 +81,7 @@ def main():
     #                       callbacks=[csv_logger, early_stops, reduce_lr, model_ckpt])
 
     # try:
-    #     model.save("/root/shared/results/tcnn_crio_frags.h5")
+    #     model.save(r"/root/shared/results/tcnn_crio_frags.h5")
     # except Exception as e:
     #     log.exception('Exception during model saving')
 
