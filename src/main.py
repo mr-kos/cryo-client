@@ -3,37 +3,52 @@ import sys
 import csv
 import numpy as np
 import pandas as pd
-import logging as log
+import logging
 from timeit import default_timer as timer
 
-# os.environ['CUDA_VISIBLE_DEVICES'] = '-1' # disable GPU
-log.basicConfig(filename="/root/shared/results/my_logs.log", level=log.INFO, filemode="w")
+logging.basicConfig(filename="my_logs.log", level=logging.INFO, filemode="w")
+log = logging.getLogger(__name__)
 
 from keras.utils import np_utils # utilities for one-hot encoding of ground truth values
 from keras.callbacks import EarlyStopping, ModelCheckpoint, CSVLogger, ReduceLROnPlateau
+log.info('Main modules were imported')
 
-from .model import tcnn_compile
-from .data import data_split, data_downloading, get_image_data
+from model import tcnn_compile
+from data import data_split, data_downloading, get_image_data
 
+log.info('Custom modules were imported')
 # fix random seed for reproducibility
 seed = 7
 np.random.seed(seed)
 
 def main():
 
-    df = pd.read_csv('fragments-train.csv')
-    X_, Y_, class_dict = get_image_data(df)
-    Y_test = np.array(Y_['test'])
+    log.info('Starting program..')
+
+    log.info('Current dir ' + os.getcwd())
+    try:
+        df = pd.read_csv('fragments-train.csv')
+    except Exception as e:
+        log.exception('Exception during reading CSV-file')
+        return 1
+    log.info('CSV-file with data structure was readed')
+
+    # READ DATAFRAME WITH TRAIN SAMPLES AND SPLIT IT BEFORE DOWNLOADING
+    # AND RECEIVING IMAGE DATA
+
+    # X_, Y_, class_dict = get_image_data(df)
+    log.info('Image data received')
+    # Y_test = np.array(Y_['test'])
 
 
-    new_class_dict = {}
-    Yn_ = {}
+    # new_class_dict = {}
+    # Yn_ = {}
 
 
-    for key in class_dict:
-        new_class_dict[class_dict[key]] = key
+    # for key in class_dict:
+    #     new_class_dict[class_dict[key]] = key
 
-    num_classes = len(new_class_dict)
+    # num_classes = len(new_class_dict)
 
 
     # Fragments dataset
@@ -46,7 +61,12 @@ def main():
 
     # T-CNN(2) implementation
 
-    model = tcnn_compile(conv_layers_count=2, num_classes=num_classes)
+    # model = tcnn_compile(conv_layers_count=2, num_classes=num_classes)
+    try:
+        model = tcnn_compile(conv_layers_count=2, num_classes=6)
+    except Exception as e:
+        log.exception('Exception during model compiling')
+        return 1
 
     # csv_logger = CSVLogger('tcnn_crio_frags.log')
     # early_stops = EarlyStopping(monitor='val_accuracy', min_delta=0, patience=10, verbose=1, mode='auto', baseline=None, restore_best_weights=True)
@@ -60,7 +80,12 @@ def main():
     #                       validation_data=(X_['val'], Yn_['val']), verbose=1, shuffle=True,
     #                       callbacks=[csv_logger, early_stops, reduce_lr, model_ckpt])
 
-    model.save("/root/shared/results/tcnn_crio_frags.h5")
+    # try:
+    #     model.save("/root/shared/results/tcnn_crio_frags.h5")
+    # except Exception as e:
+    #     log.exception('Exception during model saving')
+
+    log.info('FINISH')
 
 if __name__ == "__main__":
     sys.exit(main())

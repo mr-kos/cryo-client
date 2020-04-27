@@ -1,0 +1,11 @@
+INFO:__main__:Main modules were imported
+INFO:__main__:Custom modules were imported
+INFO:__main__:Starting program..
+INFO:__main__:Current dir C:\Users\mrily\cryo-client\src
+INFO:__main__:CSV-file with data structure was readed
+INFO:__main__:Image data received
+INFO:model:Creating tcnn model...
+INFO:model:Model has been created!
+INFO:model:Compiling model...
+INFO:model:Model successfully compiled!
+INFO:__main__:FINISH

@@ -1,5 +1,11 @@
+import os
+from timeit import default_timer as timer
 from PIL import Image
 from ftplib import FTP
+import numpy as np
+
+import logging
+log = logging.getLogger(__name__)
 
 # Dataset splitting into train(with validation) and test/validation sub-arrays
 # IN - dataframe : pd.DataFrame, samples per each class : int, koef : float(0 to 1) for train sub-array size.

@@ -3,6 +3,9 @@ from keras.layers import Input, MaxPooling2D, Dense, Dropout, Flatten, Conv2D, A
 from keras.optimizers import Adam
 from keras.layers.normalization import BatchNormalization
 
+import logging
+log = logging.getLogger(__name__)
+
 def tcnn_compile(conv_layers_count=2, num_classes=6):
 
     log.info('Creating tcnn model...')
