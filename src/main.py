@@ -6,7 +6,7 @@ import pandas as pd
 import logging
 from timeit import default_timer as timer
 
-logging.basicConfig(filename="my_logs.log", level=logging.INFO, filemode="w")
+logging.basicConfig(filename="/root/shared/results/my_logs.log", level=logging.INFO, filemode="w")
 log = logging.getLogger(__name__)
 
 from keras.utils import np_utils # utilities for one-hot encoding of ground truth values
