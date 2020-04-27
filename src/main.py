@@ -80,10 +80,10 @@ def main():
     #                       validation_data=(X_['val'], Yn_['val']), verbose=1, shuffle=True,
     #                       callbacks=[csv_logger, early_stops, reduce_lr, model_ckpt])
 
-    # try:
-    #     model.save(r"/root/shared/results/tcnn_crio_frags.h5")
-    # except Exception as e:
-    #     log.exception('Exception during model saving')
+    try:
+        model.save("/root/shared/results/tcnn_crio_frags.h5")
+    except Exception as e:
+        log.exception('Exception during model saving')
 
     log.info('FINISH')
 
