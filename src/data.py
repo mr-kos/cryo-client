@@ -113,7 +113,7 @@ def get_image_data(df):
 
         for image in images:
             im = list(Image.open(path+'/'+image).getdata(0))
-            class_name = class_dict[df.iloc[int(image[:-4]) - 1, ]['additive']]
+            class_name = class_dict[list(df[df['id']==int(image[:-4])]['additive'])[0]]
             X_[sub_array].append(im)
             Y_[sub_array].append(class_name)
 
