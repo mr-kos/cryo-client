@@ -55,7 +55,6 @@ def main():
 
     log.info('Start data processing..')
     try:
-        Y_test = np.array(Y_['test'])
         new_class_dict = {}
         Yn_ = {}
 
@@ -99,7 +98,7 @@ def main():
     log.info('Fitting model..')
     try:
         model.fit(X_['train'], Yn_['train'], batch_size=64, epochs=2,
-                            validation_data=(X_['val'], Yn_['val']), verbose=1, shuffle=True,
+                            validation_data=(X_['not_train'], Yn_['not_train']), verbose=1, shuffle=True,
                             callbacks=[csv_logger, early_stops, reduce_lr])
     except Exception as e:
         log.exception('Fitting was failed!')
