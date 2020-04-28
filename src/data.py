@@ -42,17 +42,14 @@ def data_downloading(splitted_data, fragments_per_sample=100, special_keys=[]):
 
     log.info('Connecting to FTP server...')
     ftp = FTP()
-    ftp.connect('83.149.249.48')
-    ftp.login()
-    try:
-        ftp.sendcmd('PORT 83,149,249,48,192,92')
-    except:
-        log.info('sendcmd PORT failed!')
-
-    try:
-        log.info(ftp.getwelcome())
-    except Exception as e:
-        log.exception('Get welcome failed')
+    connect = ftp.connect('83.149.249.48')
+    log.info(connect)
+    con_log = ftp.login()
+    log.info(con_log)
+    # try:
+    #     ftp.sendcmd('PORT 83,149,249,48,192,92')
+    # except:
+    #     log.info('sendcmd PORT failed!')
 
     log.info('Connection succeed!')
 
@@ -74,11 +71,7 @@ def data_downloading(splitted_data, fragments_per_sample=100, special_keys=[]):
 
         start = timer()
 
-        log.info(ftp.mlsd('/dataset/dataset_fragments/'))
-
         for one_dir in splitted_data[sub_array]:
-
-            log.info('One dir == '+str(one_dir))
 
             ftp.cwd('/dataset/dataset_fragments/' + str(one_dir))
 
