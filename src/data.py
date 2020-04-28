@@ -83,9 +83,9 @@ def data_downloading(splitted_data, fragments_per_sample=100, special_keys=[]):
                     ftp.retrbinary('RETR ' + filename, file.write)
         end = timer()
 
-        ftp.close()
+    ftp.close()
 
-        log.info('Time: %.2f' % ( (end - start) // 60), ' m. ')
+    log.info('Time: %.2f' % ( (end - start) // 60), ' m. ')
 
     log.info('Data dowloaded successfully!')
 
