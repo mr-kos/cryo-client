@@ -49,11 +49,19 @@ def data_downloading(splitted_data, fragments_per_sample=100, special_keys=[]):
     except:
         log.info('sendcmd PORT failed!')
 
+    try:
+        log.info(ftp.getwelcome())
+    except Exception as e:
+        log.exception('Get welcome failed')
+
     log.info('Connection succeed!')
 
     log.info('Downloading data...')
 
     for sub_array in splitted_data:
+
+        log.info('Sub array == '+ str(sub_array))
+
         if len(special_keys):
             if sub_array not in special_keys:
                 continue
@@ -66,7 +74,11 @@ def data_downloading(splitted_data, fragments_per_sample=100, special_keys=[]):
 
         start = timer()
 
+        log.info(ftp.mlsd('/dataset/dataset_fragments/'))
+
         for one_dir in splitted_data[sub_array]:
+
+            log.info('One dir == '+str(one_dir))
 
             ftp.cwd('/dataset/dataset_fragments/' + str(one_dir))
 

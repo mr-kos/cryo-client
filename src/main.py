@@ -39,14 +39,17 @@ def main():
         splitted_data = data_split(df=df, samples_per_class=5)
     except Exception as e:
         log.exception('Error during splitting')
+        return 1
     try:
         data_downloading(splitted_data=splitted_data, fragments_per_sample=10)
     except Exception as e:
         log.exception('Error during data downloading')
+        return 1
     try:
         X_, Y_, class_dict = get_image_data(df)
     except:
         log.exception('Error during image data receiving')
+        return 1
     # X_, Y_, class_dict = get_image_data(df)
     log.info('Image data received')
     # Y_test = np.array(Y_['test'])
@@ -95,6 +98,7 @@ def main():
         model.save("/root/shared/results/tcnn_crio_frags.h5")
     except Exception as e:
         log.exception('Exception during model saving')
+        return 1
 
     log.info('Model was saved!')
 
