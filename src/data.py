@@ -36,26 +36,20 @@ def data_split(df, samples_per_class=20, train_koef=0.7):
 #      fragments count per each sample of image: int(0 to 6972),
 #      only keys of data dict to be downloaded: list
 # OUT - finish message (and data, downloaded on the client or server. path: '.../server_data/...')
-def data_downloading(splitted_data, fragments_per_sample, special_keys=[]):
+def data_downloading(splitted_data, fragments_per_sample=100, special_keys=[]):
 
     log.info('Downloading train data from FTP server...')
 
     log.info('Connecting to FTP server...')
-    try:
-        ftp = FTP()
-        ftp.connect('83.149.249.48')
-        ftp.login()
-    except Exception:
-        log.error('Connection failed!')
-        log.error(Exception)
+    ftp = FTP()
+    ftp.connect('83.149.249.48')
+    ftp.login()
     try:
         ftp.sendcmd('PORT 83,149,249,48,192,92')
     except:
         log.info('sendcmd PORT failed!')
 
     log.info('Connection succeed!')
-
-    print('Connection succeed!')
 
     log.info('Downloading data...')
 
@@ -64,8 +58,11 @@ def data_downloading(splitted_data, fragments_per_sample, special_keys=[]):
             if sub_array not in special_keys:
                 continue
 
-        path = os.getcwd() + '/server_data/' + sub_array
-        os.makedirs(path,exist_ok=True)
+        path = '/src/server_data/' + sub_array
+
+        os.makedirs(path, exist_ok=True)
+
+        log.info('Dirs were made!')
 
         start = timer()
 
@@ -83,11 +80,9 @@ def data_downloading(splitted_data, fragments_per_sample, special_keys=[]):
 
         ftp.close()
 
-        print('Time: %.2f' % ( (end - start) // 60), ' m. ')
+        log.info('Time: %.2f' % ( (end - start) // 60), ' m. ')
 
     log.info('Data dowloaded successfully!')
-
-    print('Downloading completed!')
 
 # Getting data for model from images
 # IN - dataframe with image ids and class names
@@ -96,7 +91,7 @@ def get_image_data(df):
 
     log.info('Mining data from images...')
 
-    main_path = os.getcwd() + '/server_data'
+    main_path = '/src/server_data'
     sub_arrays = os.listdir(path=main_path)
     classes = list(df['additive'].unique())
     class_dict = {}
