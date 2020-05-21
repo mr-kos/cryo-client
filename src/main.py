@@ -18,15 +18,16 @@ from model import tcnn_compile
 from data import data_split, data_downloading, get_image_data
 
 log.info('Custom modules were imported')
-# fix random seed for reproducibility
-# seed = 7
-# np.random.seed(seed)
+seed = np.random.randint(1000)
 
 def main():
 
     log.info('Starting program..')
 
     log.info('Current dir ' + os.getcwd())
+
+    download_status = False
+    downloading_cycles = 0
     try:
         df = pd.read_csv('/src/fragments2-lite-train.csv')
     except Exception as e:
@@ -36,16 +37,21 @@ def main():
 
     # READ DATAFRAME WITH TRAIN SAMPLES AND SPLIT IT BEFORE DOWNLOADING
     # AND RECEIVING IMAGE DATA
+    log.info('Splitting data into train and val subsets...')
     try:
-        splitted_data = data_split(df=df, samples_per_class=40)
+        splitted_data = data_split(df, samples_per_class=80,
+                  split_koeffs=[0.8],
+                  arrays_labels=['train', 'val'], seed=seed)
     except Exception as e:
         log.exception('Error during splitting')
         return 1
-    try:
-        data_downloading(splitted_data=splitted_data, fragments_per_sample=25)
-    except Exception as e:
-        log.exception('Error during data downloading')
-        return 1
+    while download_status == False and downloading_cycles <= 5:
+        downloading_cycles += 1
+        try:
+            data_downloading(ip='83.149.249.48', splitted_data=splitted_data, fragments_per_sample=25, seed=seed)
+            download_status = True
+        except Exception as e:
+            log.exception('Error during data downloading')
     try:
         X_, Y_, class_dict = get_image_data(df)
     except:
@@ -64,12 +70,6 @@ def main():
 
         num_classes = len(new_class_dict)
 
-        # Fragments dataset
-        for key in X_:
-            X_[key] = np.array(X_[key], dtype=np.uint8)
-            X_[key] = X_[key].reshape(X_[key].shape[0], 256, 256, 1)
-            X_[key] = X_[key] / 256
-            X_[key] = np.float32(X_[key])
         for key in Y_:
             Yn_[key] = np_utils.to_categorical(Y_[key], num_classes)
     except Exception as e:
@@ -78,10 +78,9 @@ def main():
     # T-CNN(2) implementation
     log.info('Data processing was finished')
     try:
-        # model = tcnn_compile(conv_layers_count=2, num_classes=num_classes)
         model = load_model('/src/global_tcnn2_crio_2.h5')
     except Exception as e:
-        log.exception('Exception during model compiling')
+        log.exception('Exception during model loading')
         return 1
 
     log.info('Initializing model callbacks..')
@@ -101,19 +100,13 @@ def main():
     log.info('Fitting model..')
     try:
         model.fit(X_['train'], Yn_['train'], batch_size=64, epochs=10,
-                            validation_data=(X_['not_train'], Yn_['not_train']), verbose=1, shuffle=True,
+                            validation_data=(X_['val'], Yn_['val']), verbose=1, shuffle=True,
                             callbacks=[csv_logger, early_stops,model_ckpt])
     except Exception as e:
         log.exception('Fitting was failed!')
         return 1
 
     log.info('Success!')
-
-    # try:
-    #     model.save("/root/shared/results/tcnn_crio.h5")
-    # except Exception as e:
-    #     log.exception('Exception during model saving')
-    #     return 1
 
     log.info('Model was saved!')
 
