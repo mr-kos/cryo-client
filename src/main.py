@@ -48,7 +48,7 @@ def main():
     while download_status == False and downloading_cycles <= 5:
         downloading_cycles += 1
         try:
-            data_downloading(ip='83.149.249.48', splitted_data=splitted_data, fragments_per_sample=25, seed=seed)
+            data_downloading(ip='83.149.249.48', splitted_data=splitted_data, fragments_per_sample=10, seed=seed)
             download_status = True
         except Exception as e:
             log.exception('Error during data downloading')
