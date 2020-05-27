@@ -7,6 +7,7 @@ import time
 
 import logging
 log = logging.getLogger(__name__)
+seed = np.random.randint(1000) 
 
 def data_split(df, samples_per_class=20, split_koeffs=[0.8, 0.1], arrays_labels=['train', 'val', 'test'], seed=7):
 
@@ -50,14 +51,16 @@ def ftp_connect(ip):
 def data_downloading(ip, splitted_data, fragments_per_sample=100, special_keys=[], seed=7):
     con_cycles = 0
     con_status = False
-    while con_status == False and con_cycles <= 12:
+    while con_status == False:
         con_cycles += 1
         try:
             ftp = ftp_connect(ip)
             con_status = True
         except Exception as e:
-            log.exception('Error during connection to server')
-            time.sleep(300)
+            log.exception('Error during connection to server, trying again...')
+            if con_cycles > 10:
+                log.info("Connection refused")
+                return 1
 
     log.info('Downloading train data from FTP server...')
 
@@ -104,8 +107,6 @@ def data_downloading(ip, splitted_data, fragments_per_sample=100, special_keys=[
         log.info('Time: {:d} h. {:d} m. {:d} s.'.format(hours, minutes, seconds))
 
     ftp.close()
-
-    log.info('Time: %.2f' % ( (end - start) // 60), ' m. ')
 
     log.info('Data dowloaded successfully!')
 

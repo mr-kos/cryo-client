@@ -1,6 +1,6 @@
-from keras.models import Model # basic class for specifying and training a neural network
-from keras.layers import Input, MaxPooling2D, Dense, Dropout, Flatten, Conv2D, AveragePooling2D
-from keras.optimizers import Adam
+from tensorflow.keras.models import Model # basic class for specifying and training a neural network
+from tensorflow.keras.layers import Input, MaxPooling2D, Dense, Dropout, Flatten, Conv2D, AveragePooling2D
+from tensorflow.keras.optimizers import Adam
 from keras.layers.normalization import BatchNormalization
 
 import logging
