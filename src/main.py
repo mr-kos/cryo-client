@@ -31,7 +31,7 @@ def main():
     download_status = False
     downloading_cycles = 0
     try:
-        df = pd.read_csv('/src/fragments2-lite-train.csv')
+        df = pd.read_csv('/src/fragments3-lite-train.csv')
     except Exception as e:
         log.exception('Exception during reading CSV-file')
         return 1
@@ -41,7 +41,7 @@ def main():
     # AND RECEIVING IMAGE DATA
     log.info('Splitting data into train and val subsets...')
     try:
-        splitted_data = data_split(df, samples_per_class=10,
+        splitted_data = data_split(df, samples_per_class=20,
                   split_koeffs=[0.8],
                   arrays_labels=['train', 'val'], seed=seed)
     except Exception as e:
@@ -104,7 +104,7 @@ def main():
     log.info('Initializing completed')
     log.info('Fitting model..')
     try:
-        model.fit(X_['train'], Yn_['train'], batch_size=32, epochs=10,
+        model.fit(X_['train'], Yn_['train'], batch_size=32, epochs=15,
                             validation_data=(X_['val'], Yn_['val']), verbose=1, shuffle=True,
                             callbacks=[csv_logger])
     except Exception as e:
