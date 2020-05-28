@@ -83,14 +83,14 @@ def main():
     # T-CNN(2) implementation
     log.info('Data processing was finished')
     try:
-        model = load_model('/src/global_tcnn2_crio_2.h5')
+        model = load_model('/src/global_tcnn2_crio_3.h5')
     except Exception as e:
         log.exception('Exception during model loading')
         return 1
 
     log.info('Initializing model callbacks..')
     try:
-        csv_logger = CSVLogger('/root/shared/results/tcnn_crio.log')
+        csv_logger = CSVLogger('/root/shared/results/tcnn_crio3.log')
         #early_stops = EarlyStopping(monitor='val_loss', min_delta=0, patience=15, verbose=1, mode='auto', baseline=None)
         # reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=3, min_lr=0.00001)
         #model_ckpt = ModelCheckpoint(filepath='/root/shared/results/tcnn_crio.ckpt',
@@ -113,7 +113,7 @@ def main():
 
     log.info('Success!')
 
-    model.save("/root/shared/results/global_tcnn2_crio_2.h5")
+    model.save("/root/shared/results/global_tcnn2_crio_3.h5")
 
     log.info('Model was saved!')
 
