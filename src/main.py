@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import logging
 from timeit import default_timer as timer
+import time
 
 logging.basicConfig(filename="/root/shared/results/main.log", level=logging.INFO, filemode="w")
 log = logging.getLogger(__name__)
@@ -14,7 +15,6 @@ from keras.utils import np_utils # utilities for one-hot encoding of ground trut
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, CSVLogger, ReduceLROnPlateau
 log.info('Main modules were imported')
 
-from model import tcnn_compile
 from data import data_split, data_downloading, get_image_data
 
 log.info('Custom modules were imported')
@@ -41,22 +41,23 @@ def main():
     # AND RECEIVING IMAGE DATA
     log.info('Splitting data into train and val subsets...')
     try:
-        splitted_data = data_split(df, samples_per_class=20,
-                  split_koeffs=[0.8],
-                  arrays_labels=['train', 'val'], seed=seed)
+        splitted_data = data_split(df, samples_per_class=10,
+                  split_koeffs=[1],
+                  arrays_labels=['train', 'none'], seed=seed)
     except Exception as e:
         log.exception('Error during splitting')
         return 1
     while download_status == False:
         downloading_cycles += 1
         try:
-            data_downloading(ip='83.149.249.48', splitted_data=splitted_data, fragments_per_sample=100, seed=seed)
+            data_downloading(ip='83.149.249.48', splitted_data=splitted_data, fragments_per_sample=10, seed=seed)
             download_status = True
         except Exception as e:
             log.exception('Error during data downloading')
-            if downloading_cycles > 3:
+            if downloading_cycles > 5:
                 log.info("Bad connection. Downloading stops!")
                 return 1
+            time.sleep(600)
     try:
         X_, Y_, class_dict = get_image_data(df)
     except:
@@ -83,7 +84,7 @@ def main():
     # T-CNN(2) implementation
     log.info('Data processing was finished')
     try:
-        model = load_model('/src/global_tcnn2_crio_2.h5')
+        model = load_model('/src/global_tcnn2_crio_3.h5')
     except Exception as e:
         log.exception('Exception during model loading')
         return 1
@@ -91,12 +92,6 @@ def main():
     log.info('Initializing model callbacks..')
     try:
         csv_logger = CSVLogger('/root/shared/results/tcnn_crio.log')
-        #early_stops = EarlyStopping(monitor='val_loss', min_delta=0, patience=15, verbose=1, mode='auto', baseline=None)
-        # reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=3, min_lr=0.00001)
-        #model_ckpt = ModelCheckpoint(filepath='/root/shared/results/tcnn_crio.ckpt',
-        #                        monitor='val_loss',
-        #                        save_best_only=True,
-        #                        verbose=1)
     except Exception as e:
         log.exception('Callbacks were not initialized')
         return 1
@@ -104,16 +99,17 @@ def main():
     log.info('Initializing completed')
     log.info('Fitting model..')
     try:
-        model.fit(X_['train'], Yn_['train'], batch_size=32, epochs=15,
-                            validation_data=(X_['val'], Yn_['val']), verbose=1, shuffle=True,
-                            callbacks=[csv_logger])
+        model.fit(X_['train'], Yn_['train'],
+                    batch_size=32, epochs=10,
+                    verbose=1, shuffle=True,
+                    callbacks=[csv_logger])
     except Exception as e:
         log.exception('Fitting was failed!')
         return 1
 
     log.info('Success!')
 
-    model.save("/root/shared/results/global_tcnn2_crio_2.h5")
+    model.save("/root/shared/results/global_tcnn2_crio_3.h5")
 
     log.info('Model was saved!')
 
