@@ -41,7 +41,7 @@ def main():
     # AND RECEIVING IMAGE DATA
     log.info('Splitting data into train and val subsets...')
     try:
-        splitted_data = data_split(df, samples_per_class=10,
+        splitted_data = data_split(df, samples_per_class=40,
                   split_koeffs=[1],
                   arrays_labels=['train', 'none'], seed=seed)
     except Exception as e:
@@ -50,7 +50,7 @@ def main():
     while download_status == False:
         downloading_cycles += 1
         try:
-            data_downloading(ip='83.149.249.48', splitted_data=splitted_data, fragments_per_sample=10, seed=seed)
+            data_downloading(ip='83.149.249.48', splitted_data=splitted_data, fragments_per_sample=50, seed=seed)
             download_status = True
         except Exception as e:
             log.exception('Error during data downloading')
@@ -100,7 +100,7 @@ def main():
     log.info('Fitting model..')
     try:
         model.fit(X_['train'], Yn_['train'],
-                    batch_size=32, epochs=10,
+                    batch_size=16, epochs=10,
                     verbose=1, shuffle=True,
                     callbacks=[csv_logger])
     except Exception as e:
