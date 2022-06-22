@@ -1,4 +1,4 @@
-numpy==1.18.1
+numpy==1.22.0
 pandas==0.25.3
 pillow==5.1.0
 h5py==2.10.0
